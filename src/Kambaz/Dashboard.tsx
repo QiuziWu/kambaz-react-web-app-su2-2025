@@ -13,7 +13,8 @@ export default function Dashboard() {
                         <div>
                             <h5> CS1234 React JS </h5>
                             <p className="wd-dashboard-course-title">
-                                Full Stack software developer  </p>
+                                Full Stack software developer  
+                            </p>
                             <button> Go </button>
                         </div>
                     </Link>
@@ -24,7 +25,8 @@ export default function Dashboard() {
                         <img src="/images/reactjs.jpg" width={200} />
                         <div>
                             <h5>CS2345 Node JS</h5>
-                            <p className="wd-dashboard-course-title">Backend Development with Express</p>
+                            <p className="wd-dashboard-course-title">
+                                Backend Development with Express</p>
                             <button>Go</button>
                         </div>
                     </Link>

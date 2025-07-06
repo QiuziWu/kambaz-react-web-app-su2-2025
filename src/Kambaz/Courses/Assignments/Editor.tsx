@@ -99,17 +99,10 @@ export default function AssignmentEditor() {
                     <tr>
                         <td></td>
                         <td>
-                            <label htmlFor="wd-available-from">Available From</label><br />
-                            <input id="wd-available-from" type="date" defaultValue="2024-05-06" />
-                        </td>
-                    </tr>
-                    <br />
-
-                    <tr>
-                        <td></td>
-                        <td>
-                            <label htmlFor="wd-available-until">Until</label><br />
-                            <input id="wd-available-until" type="date" defaultValue="2024-05-20" />
+                            <label htmlFor="wd-available-from">Available from</label>
+                            <span style={{ marginLeft: '30px' }}>Until</span><br />
+                            <input type="date" id="wd-available-from" value="2024-05-06" />&nbsp;
+                            <input type="date" id="wd-available-until" value="2024-05-20" />
                         </td>
                     </tr>
                 </tbody>
