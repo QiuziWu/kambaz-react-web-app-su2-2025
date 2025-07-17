@@ -1,7 +1,7 @@
 import { GoPlus } from "react-icons/go";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
-export default function AssignmentsGroupButtons() {
+export default function AssignmentGroupButtons() {
     return (
         <div className="float-end">
             <div className="d-flex">

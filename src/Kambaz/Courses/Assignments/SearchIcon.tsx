@@ -1,9 +1,9 @@
-import { GoChecklist } from "react-icons/go";
+import { HiSearch } from "react-icons/hi";
 
 export default function SearchIcon() {
     return (
         <span className="me-1 position-relative">
-            <GoChecklist style={{ top: "10px", left: "16px" }}
+            <HiSearch style={{ top: "10px", left: "16px" }}
                 className="text-secondary me-1
                        position-absolute fs-5" />
         </span>

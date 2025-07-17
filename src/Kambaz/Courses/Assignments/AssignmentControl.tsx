@@ -1,7 +1,7 @@
 import { Button, Form } from "react-bootstrap";
 import SearchIcon from "./SearchIcon";
 
-export default function AssignmentsControl() {
+export default function AssignmentControl() {
     return (
         <div className="d-flex">
             <SearchIcon />

@@ -1,14 +1,13 @@
-import { Routes, Route, Navigate } from "react-router";
-import { FaAlignJustify } from "react-icons/fa6";
 import Signin from "./Signin";
-import Profile from "./Profile";
+import Profile from "./Profile"
 import Signup from "./Signup";
 import AccountNavigation from "./Navigation";
+import { Routes, Route, Navigate } from "react-router";
+import { FaAlignJustify } from "react-icons/fa6";
 
 export default function Account() {
   return (
     <div id="wd-account-screen">
-      <h2>Account</h2>
       <h2 className="text-danger"> <FaAlignJustify className="me-4 fs-4 mb-1" /> Account</h2>
       <hr />
       <table>
@@ -27,7 +26,5 @@ export default function Account() {
         </tr>
       </table>
     </div>
-
   );
 }
-
