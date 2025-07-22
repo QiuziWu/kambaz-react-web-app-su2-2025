@@ -20,6 +20,7 @@ import FindIndex from "./FindIndex";
 import FilterFunction from "./FilterFunction";
 import JsonStringify from "./JsonStringify";
 import House from "./House";
+import TodoItem from "./todos/TodoItem";
 import TodoList from "./todos/TodoList";
 import Spreading from "./Spreading";
 import Destructing from "./Destructing";
@@ -33,7 +34,7 @@ import Highlight from "./Highlight";
 import PathParameters from "./PathParameters";
 
 export default function Lab3() {
-   console.log('Hello World!');
+    console.log('Hello World!');
     return (
         <Container className="mt-3">
             <h3>Lab 3</h3>
@@ -59,6 +60,7 @@ export default function Lab3() {
             <FilterFunction />
             <JsonStringify />
             <House />
+            <TodoItem />
             <TodoList />
             <Spreading />
             <Destructing />
