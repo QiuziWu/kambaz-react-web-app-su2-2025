@@ -1,11 +1,13 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
 import * as db from "../../Database";
-
+import { useSelector } from "react-redux";
 
 export default function AssignmentEditor() {
     const { cid, aid } = useParams();
     const assignment = db.assignments.find(a => a._id === aid && a.course === cid);
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    if (currentUser?.role !== "FACULTY") return <h4>You are not authorized to edit this assignment.</h4>;
     if (!assignment) return <h3>Assignment not found</h3>;
     return (
         <div id="wd-assignments-editor">

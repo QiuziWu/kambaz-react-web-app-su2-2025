@@ -6,13 +6,18 @@ import * as db from "../../Database";
 import AssignmentButtons from "./AssignmentButtons";
 import AssignmentControl from "./AssignmentControl";
 import AssignmentGroupButtons from "./AssignmentGroupButtons";
+import { useSelector } from "react-redux";
+
 
 export default function Assignments() {
     const { cid } = useParams();
     const courseAssignments = db.assignments.filter((a) => a.course === cid);
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    const isFaculty = currentUser?.role === "FACULTY";
+
     return (
         <div id="wd-assignments">
-            <AssignmentControl />
+            {isFaculty && <AssignmentControl />}
             <ListGroup className="rounded-0 mt-5">
                 <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
                     <div className="wd-title p-3 ps-2 bg-secondary">
@@ -42,9 +47,11 @@ export default function Assignments() {
                                             <b>Due</b> {a.due} | {a.points} pts
                                         </div>
                                     </div>
-                                    <div className="ms-auto">
-                                        <AssignmentButtons />
-                                    </div>
+                                    {isFaculty && (
+                                        <div className="ms-auto">
+                                            <AssignmentButtons />
+                                        </div>
+                                    )}
                                 </div>
                             </ListGroup.Item>
                         ))}
