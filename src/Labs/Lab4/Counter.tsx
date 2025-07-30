@@ -7,11 +7,11 @@ export default function Counter() {
         <div id="wd-counter-use-state">
             <h2>Counter: {count}</h2>
             <button
-                onClick={() =>  setCount(count + 1)}
-                id="wd-counter-up-click">Up</button>
+                onClick={() => setCount(count + 1)}
+                id="wd-counter-up-click" className="btn btn-success ms-1">Up</button>
             <button
                 onClick={() => setCount(count - 1)}
-                id="wd-counter-down-click">Down</button>
+                id="wd-counter-down-click" className="btn btn-danger ms-1">Down</button>
             <hr /></div>);
 }
 

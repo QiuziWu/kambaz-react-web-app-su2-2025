@@ -10,11 +10,11 @@ export default function ArrayStateVariable() {
     return (
         <div id="wd-array-state-variables">
             <h2>Array State Variable</h2>
-            <button onClick={addElement}>Add Element</button>
+            <button onClick={addElement} className="btn btn-primary mb-1">Add Element</button>
             <ul>
                 {array.map((item, index) => (
                     <li key={index}> {item}
-                        <button onClick={() => deleteElement(index)}>
+                        <button onClick={() => deleteElement(index)} className="btn btn-secondary mb-1 ms-1">
                             Delete</button>
                     </li>))}
             </ul><hr /></div>);
