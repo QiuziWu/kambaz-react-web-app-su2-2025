@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaAlignJustify } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { addCourse, deleteCourse, updateCourse, setCurrentCourse } from "./Courses/reducer";
+import { addCourse, deleteCourse, updateCourse } from "./Courses/reducer";
 import { toggleEnrollment } from "./Enrollments/reducer";
 
 export default function Dashboard() {

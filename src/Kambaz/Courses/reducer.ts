@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
     courses: courses,
+    currentCourse: null
 };
 
 const coursesSlice = createSlice({
