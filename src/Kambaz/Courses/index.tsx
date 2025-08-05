@@ -6,7 +6,48 @@ import AssignmentEditor from "./Assignments/Editor";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { addAssignment, updateAssignment } from "./Assignments/reducer";
+import * as assignmentClient from "./Assignments/client";
+import { useNavigate } from "react-router-dom";
+
+function AssignmentEditorWrapper() {
+    const { cid, aid } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+    const [assignmentData, setAssignmentData] = useState<any>(null);
+
+    const addNewAssignment = async () => {
+        try {
+            const newAssignment = await assignmentClient.createAssignment(assignmentData);
+            dispatch(addAssignment(newAssignment));
+            navigate(`/Kambaz/Courses/${cid}/Assignments`);
+        } catch (error) {
+            console.error("Error creating assignment:", error);
+        }
+    };
+
+    const updateAssignmentHandler = async () => {
+        try {
+            const updatedAssignment = await assignmentClient.updateAssignment(aid!, assignmentData);
+            dispatch(updateAssignment(updatedAssignment));
+            navigate(`/Kambaz/Courses/${cid}/Assignments`);
+        } catch (error) {
+            console.error("Error updating assignment:", error);
+        }
+    };
+
+    return (
+        <AssignmentEditor
+            assignmentData={assignmentData}
+            setAssignmentData={setAssignmentData}
+            addNewAssignment={addNewAssignment}
+            updateAssignment={updateAssignmentHandler}
+        />
+    );
+}
 
 export default function Courses() {
     const { cid } = useParams();
@@ -33,7 +74,7 @@ export default function Courses() {
                         <Route path="Home" element={<Home />} />
                         <Route path="Modules" element={<Modules />} />
                         <Route path="Assignments" element={<Assignments />} />
-                        <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+                        <Route path="Assignments/:aid" element={<AssignmentEditorWrapper />} />
                         <Route path="People" element={<PeopleTable />} />
                     </Routes>
                 </div>

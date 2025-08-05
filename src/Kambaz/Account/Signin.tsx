@@ -3,19 +3,28 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
-import * as db from "../Database";
-
+import * as client from "./client";
 
 export default function Signin() {
   const [credentials, setCredentials] = useState<any>({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const signin = () => {
-    const user = db.users.find(
-      (u: any) => u.username === credentials.username && u.password === credentials.password);
-    if (!user) return;
-    dispatch(setCurrentUser(user));
-    navigate("/Kambaz/Dashboard");
+  
+  const signin = async () => {
+    try {
+      console.log("Attempting to signin with credentials:", credentials);
+      
+      const user = await client.signin(credentials);
+      console.log("Signin successful:", user);
+      
+      dispatch(setCurrentUser(user));
+      navigate("/Kambaz/Dashboard");
+    } catch (error: any) {
+      console.error("Signin failed:", error);
+      console.error("Error status:", error.response?.status);
+      console.error("Error message:", error.response?.data);
+      alert("Login failed. Please check your username and password.");
+    }
   };
 
   return (

@@ -1,158 +1,124 @@
-import { Button, Col, Form, Row } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
-import { addAssignment, updateAssignment } from "./reducer";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-export default function AssignmentEditor() {
+export default function AssignmentEditor({ assignmentData, setAssignmentData, addNewAssignment, updateAssignment }: { assignmentData: any, setAssignmentData: (data: any) => void, addNewAssignment: () => void, updateAssignment: () => void }) {
     const { cid, aid } = useParams();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
-    const isFaculty = currentUser?.role === "FACULTY";
-
-    const isEditing = aid !== "new";
-    const assignment = isEditing ? assignments.find((a: any) => a._id === aid && a.course === cid) : null;
-
-    useEffect(() => {
-        if (!isFaculty) {
-            navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    const isNew = aid === "new";
+    const saveChange = () => {
+        if (isNew) {
+            addNewAssignment();
         }
-    }, [isFaculty]);
-
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        points: 100,
-        duedate: "",
-        availabledate: "",
-        due: "",
-        available: "",
-    });
-
+        else {
+            updateAssignment();
+        }
+    }
     useEffect(() => {
-        if (isEditing && assignment) {
-            setFormData({
-                title: assignment.title || "",
-                description: assignment.description || "",
-                points: assignment.points || 100,
-                duedate: assignment.duedate || "",
-                availabledate: assignment.availabledate || "",
-                due: assignment.due || "",
-                available: assignment.available || "",
-            });
-        } else {
-            const today = new Date().toISOString().split("T")[0];
-            const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0];
-            setFormData({
-                title: "",
+        let assignment;
+        if (isNew) {
+            assignment = {
+                title: "New Assignment",
                 description: "",
-                points: 100,
-                duedate: nextWeek,
-                availabledate: today,
-                due: `Due ${nextWeek}`,
-                available: `Available from ${today}`,
-            });
+                course: cid,
+                available_from_date: "",
+                available_from_time: "12:00",
+                available_until_date: "",
+                available_until_time: "23:59",
+                dueDate: "",
+                dueTime: "23:59",
+                points: 0
+            }
         }
-    }, [isEditing, assignment]);
-
-    const handleInputChange = (field: string, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-    };
-
-    const handleSave = () => {
-        const assignmentData = {
-            ...formData,
-            course: cid,
-            _id: isEditing ? assignment._id : Date.now().toString(),
-        };
-        if (isEditing) {
-            dispatch(updateAssignment(assignmentData));
-        } else {
-            dispatch(addAssignment(assignmentData));
+        else {
+            assignment = assignments.find((assignment: any) => assignment._id === aid)
         }
-        navigate(`/Kambaz/Courses/${cid}/Assignments`);
-    };
-
-    const handleCancel = () => {
-        navigate(`/Kambaz/Courses/${cid}/Assignments`);
-    };
-
+        setAssignmentData(assignment);
+    }, [isNew, aid, cid, assignments])
     return (
-        <div id="wd-assignments-editor" className="p-3">
-            <h4>Assignment Editor</h4>
+        <div id="wd-assignments-editor">
             <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label>Assignment Name</Form.Label>
-                    <Form.Control
-                        value={formData.title}
-                        onChange={(e) => handleInputChange("title", e.target.value)}
-                    />
+                <Form.Group className="ms-1 mb-2">
+                    <Form.Label className="mb-2">Assignment Name</Form.Label>
+                    <Form.Control id="wd-assignment-editor-name" value={assignmentData?.title || ""} onChange={(e) => setAssignmentData({ ...assignmentData, title: e.target.value })} />
                 </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={3}
-                        value={formData.description}
-                        onChange={(e) => handleInputChange("description", e.target.value)}
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Points</Form.Label>
-                    <Form.Control
-                        type="number"
-                        value={formData.points}
-                        onChange={(e) => handleInputChange("points", parseInt(e.target.value) || 0)}
-                    />
-                </Form.Group>
-                <Row>
+                <Form.Control id="wd-assignment-editor-describe" as="textarea" rows={10} className="ms-1 mb-2" value={assignmentData?.description || ""} onChange={(e) => setAssignmentData({ ...assignmentData, description: e.target.value })} />
+            </Form>
+            <Container>
+                <Row className="mb-2">
+                    <Col className="text-end" xs={3}>Points</Col>
                     <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Available From</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={formData.availabledate}
-                                onChange={(e) => handleInputChange("availabledate", e.target.value)}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Available Until</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={formData.duedate}
-                                onChange={(e) => handleInputChange("duedate", e.target.value)}
-                            />
-                        </Form.Group>
+                        <Form.Control id="wd-assignment-editor-points" value={assignmentData?.points || ""} onChange={(e) => setAssignmentData({ ...assignmentData, points: e.target.value })} />
                     </Col>
                 </Row>
-                <Form.Group className="mb-3">
-                    <Form.Label>Due Date</Form.Label>
-                    <Form.Control
-                        value={formData.due}
-                        onChange={(e) => handleInputChange("due", e.target.value)}
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Available From</Form.Label>
-                    <Form.Control
-                        value={formData.available}
-                        onChange={(e) => handleInputChange("available", e.target.value)}
-                    />
-                </Form.Group>
-                <div className="text-end">
-                    <Button variant="secondary" onClick={handleCancel}>
-                        Cancel
-                    </Button>
-                    <Button className="ms-2" variant="danger" onClick={handleSave}>
-                        Save
-                    </Button>
-                </div>
-            </Form>
+                <Row className="mb-2">
+                    <Col className="text-end" xs={3}>Assignment Group</Col>
+                    <Col>
+                        <Form.Select id="wd-assignment-group">
+                            <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+                        </Form.Select>
+                    </Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col className="text-end" xs={3}>Display Grade As</Col>
+                    <Col>
+                        <Form.Select id="wd-grade-display">
+                            <option value="PERCENT">Percentage</option>
+                        </Form.Select>
+                    </Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col className="text-end" xs={3}>Submission Type</Col>
+                    <Col>
+                        <div className="border border-gray rounded-2 p-3">
+                            <Form.Select id="wd-submission-type" className="mb-2">
+                                <option value="ONLINE">Online</option>
+                            </Form.Select>
+                            <Form.Label className="ms-2 mb-2"><b>Online Entry Options</b></Form.Label>
+                            <Form.Check className="ms-2 mb-2" type="checkbox" name="wd-online-entry-checkbox" id="wd-online-text-entry" label="Text Entry" />
+                            <Form.Check className="ms-2 mb-2" type="checkbox" name="wd-online-entry-checkbox" id="wd-online-url" label="Website URL" />
+                            <Form.Check className="ms-2 mb-2" type="checkbox" name="wd-online-entry-checkbox" id="wd-online-media" label="Media Recordings" />
+                            <Form.Check className="ms-2 mb-2" type="checkbox" name="wd-online-entry-checkbox" id="wd-online-annotation" label="Student Annotation" />
+                            <Form.Check className="ms-2 mb-2" type="checkbox" name="wd-online-entry-checkbox" id="wd-online-file" label="File Uploads" />
+                        </div>
+                    </Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col className="text-end" xs={3}>Assign</Col>
+                    <Col>
+                        <div className="border border-gray rounded-2 p-3">
+                            <Form.Group className="mb-4">
+                                <Form.Label className="mb-2"><b>Assign to</b></Form.Label>
+                                <Form.Select id="wd-assign-to">
+                                    <option value="EVERY">Everyone</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="mb-4">
+                                <Form.Label className="mb-2"><b>Due</b></Form.Label>
+                                <Form.Control type="date" id="wd-assignment-due" value={assignmentData?.dueDate || ""} onChange={(e) => setAssignmentData({ ...assignmentData, dueDate: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group>
+                                <Row>
+                                    <Col>
+                                        <Form.Label className="mb-2"><b>Available from</b></Form.Label>
+                                        <Form.Control type="date" id="wd-assignment-available-from-date" value={assignmentData?.available_from_date || ""} onChange={(e) => setAssignmentData({ ...assignmentData, available_from_date: e.target.value })} />
+                                    </Col>
+                                    <Col>
+                                        <Form.Label className="mb-2"><b>Until</b></Form.Label>
+                                        <Form.Control type="date" id="wd-assignment-available-until-date" value={assignmentData?.available_until_date || ""} onChange={(e) => setAssignmentData({ ...assignmentData, available_until_date: e.target.value })} />
+                                    </Col>
+                                </Row>
+                            </Form.Group>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
+            <hr />
+            <div className="float-end">
+                <Button as={Link as any} to={`/Kambaz/Courses/${cid}/Assignments`} variant="secondary">Cancel</Button>
+                <Button as={Link as any} to={`/Kambaz/Courses/${cid}/Assignments`} variant="danger" className="ms-2" onClick={saveChange}>Save</Button>
+            </div>
         </div>
     );
 }

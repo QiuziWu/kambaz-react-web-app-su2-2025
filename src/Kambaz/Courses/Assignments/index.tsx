@@ -7,8 +7,9 @@ import { useSelector, useDispatch } from "react-redux";
 import AssignmentButtons from "./AssignmentButtons";
 import AssignmentControl from "./AssignmentControl";
 import AssignmentGroupButtons from "./AssignmentGroupButtons";
-import { deleteAssignment } from "./reducer";
-import { useState } from "react";
+import { deleteAssignment, setAssignments } from "./reducer";
+import { useState, useEffect } from "react";
+import * as assignmentClient from "./client";
 
 export default function Assignments() {
     const { cid } = useParams();
@@ -21,14 +22,29 @@ export default function Assignments() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [assignmentToDelete, setAssignmentToDelete] = useState<any>(null);
 
+    const fetchAssignments = async () => {
+        if (!cid) return;
+        try {
+            const assignments = await assignmentClient.findAssignmentsForCourse(cid);
+            dispatch(setAssignments(assignments));
+        } catch (error) {
+            console.error("Error fetching assignments:", error);
+        }
+    };
+
     const handleDeleteClick = (assignment: any) => {
         setAssignmentToDelete(assignment);
         setShowDeleteModal(true);
     };
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
         if (assignmentToDelete) {
-            dispatch(deleteAssignment(assignmentToDelete._id));
+            try {
+                await assignmentClient.deleteAssignment(assignmentToDelete._id);
+                dispatch(deleteAssignment(assignmentToDelete._id));
+            } catch (error) {
+                console.error("Error deleting assignment:", error);
+            }
         }
         setShowDeleteModal(false);
         setAssignmentToDelete(null);
@@ -38,6 +54,12 @@ export default function Assignments() {
         setShowDeleteModal(false);
         setAssignmentToDelete(null);
     };
+
+    useEffect(() => {
+        if (cid) {
+            fetchAssignments();
+        }
+    }, [cid]);
 
     return (
         <div id="wd-assignments">

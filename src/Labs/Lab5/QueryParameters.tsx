@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FormControl } from "react-bootstrap";
+const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 
 export default function QueryParameters() {
-    const [a, setA] = useState("23");
-    const [b, setB] = useState("45");
-    const HTTP_SERVER = "http://localhost:4000";
-
+    const [a, setA] = useState("");
+    const [b, setB] = useState("");
+    
     return (
         <div id="wd-query-parameters">
             <h3>Query Parameters</h3>
@@ -17,23 +17,22 @@ export default function QueryParameters() {
                 className="mb-2"
                 defaultValue={b} type="number"
                 onChange={(e) => setB(e.target.value)} />
-            <a id="wd-query-parameter-add"
-                href={`${HTTP_SERVER}/lab5/calculator?operation=add&a=${a}&b=${b}`}>
+            <a id="wd-query-parameter-add" className="btn btn-primary mb-2 ms-1"
+                href={`${REMOTE_SERVER}/lab5/calculator?operation=add&a=${a}&b=${b}`}>
                 Add {a} + {b}
-            </a>
-            <a id="wd-query-parameter-subtract"
-                href={`${HTTP_SERVER}/lab5/calculator?operation=subtract&a=${a}&b=${b}`}>
+            </a> <br />
+            <a id="wd-query-parameter-subtract" className="btn btn-primary mb-2 ms-1"
+                href={`${REMOTE_SERVER}/lab5/calculator?operation=subtract&a=${a}&b=${b}`}>
                 Substract {a} - {b}
-            </a>
-            {/* create additional links to test multiply and divide. use IDs starting with wd-query-parameter- */}
-            <a id="wd-query-parameter-multiply"
-                href={`${HTTP_SERVER}/lab5/calculator?operation=multiply&a=${a}&b=${b}`}>
-                Multiply {a} × {b}
-            </a>
-            <a id="wd-query-parameter-divide"
-                href={`${HTTP_SERVER}/lab5/calculator?operation=divide&a=${a}&b=${b}`}>
-                Divide {a} ÷ {b}
-            </a>
+            </a> <br />
+            <a id="wd-query-parameter-multiply" className="btn btn-primary mb-2 ms-1"
+                href={`${REMOTE_SERVER}/lab5/calculator?operation=multiply&a=${a}&b=${b}`}>
+                Multiply {a} * {b}
+            </a> <br />
+            <a id="wd-query-parameter-divide" className="btn btn-primary mb-2 ms-1"
+                href={`${REMOTE_SERVER}/lab5/calculator?operation=divide&a=${a}&b=${b}`}>
+                Divide {a} / {b}
+            </a> <br />
             <hr />
         </div>
     );
