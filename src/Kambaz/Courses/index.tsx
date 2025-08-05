@@ -7,7 +7,7 @@ import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { addAssignment, updateAssignment } from "./Assignments/reducer";
 import * as assignmentClient from "./Assignments/client";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,6 @@ function AssignmentEditorWrapper() {
     const { cid, aid } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
     const [assignmentData, setAssignmentData] = useState<any>(null);
 
     const addNewAssignment = async () => {

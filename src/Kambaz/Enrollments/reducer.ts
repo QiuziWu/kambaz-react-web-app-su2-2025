@@ -1,6 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface Enrollment {
+    _id: string;
+    user: string;
+    course: string;
+}
+
+interface EnrollmentState {
+    enrollments: Enrollment[];
+}
+
+const initialState: EnrollmentState = {
     enrollments: [],
 };
 
@@ -8,40 +19,40 @@ const enrollmentsSlice = createSlice({
     name: "enrollments",
     initialState,
     reducers: {
-        setEnrollments: (state, { payload: enrollments }) => {
-            state.enrollments = enrollments;
+        setEnrollments: (state, action: PayloadAction<Enrollment[]>) => {
+            state.enrollments = action.payload;
         },
-        addEnrollment: (state, { payload: enrollment }) => {
-            const newEnrollment: any = {
+        addEnrollment: (state, action: PayloadAction<Omit<Enrollment, '_id'>>) => {
+            const newEnrollment: Enrollment = {
                 _id: Date.now().toString(),
-                user: enrollment.user,
-                course: enrollment.course,
+                user: action.payload.user,
+                course: action.payload.course,
             };
-            state.enrollments = [...state.enrollments, newEnrollment] as any;
+            state.enrollments = [...state.enrollments, newEnrollment];
         },
-        deleteEnrollment: (state, { payload: enrollmentId }) => {
+        deleteEnrollment: (state, action: PayloadAction<string>) => {
             state.enrollments = state.enrollments.filter(
-                (e: any) => e._id !== enrollmentId
+                (e) => e._id !== action.payload
             );
         },
-        toggleEnrollment: (state, { payload: { userId, courseId } }) => {
+        toggleEnrollment: (state, action: PayloadAction<{ userId: string; courseId: string }>) => {
             const existingEnrollment = state.enrollments.find(
-                (e: any) => e.user === userId && e.course === courseId
+                (e) => e.user === action.payload.userId && e.course === action.payload.courseId
             );
             
             if (existingEnrollment) {
                 // Remove enrollment
                 state.enrollments = state.enrollments.filter(
-                    (e: any) => e._id !== existingEnrollment._id
+                    (e) => e._id !== existingEnrollment._id
                 );
             } else {
                 // Add enrollment
-                const newEnrollment: any = {
+                const newEnrollment: Enrollment = {
                     _id: Date.now().toString(),
-                    user: userId,
-                    course: courseId,
+                    user: action.payload.userId,
+                    course: action.payload.courseId,
                 };
-                state.enrollments = [...state.enrollments, newEnrollment] as any;
+                state.enrollments = [...state.enrollments, newEnrollment];
             }
         },
     },

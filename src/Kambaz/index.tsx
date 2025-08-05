@@ -7,10 +7,9 @@ import "./style.css";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import CourseProtectedRoute from "./Courses/CourseProtectedRoute";
 import * as userClient from "./Account/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourses } from "./Courses/reducer";
-import * as courseClient from "./Courses/client";
 
 export default function Kambaz() {
     const dispatch = useDispatch();

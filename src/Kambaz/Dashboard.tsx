@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaAlignJustify } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-import { toggleEnrollment, setEnrollments } from "./Enrollments/reducer";
+import { setEnrollments } from "./Enrollments/reducer";
 import * as enrollmentClient from "./Enrollments/client";
 
 interface DashboardProps {
