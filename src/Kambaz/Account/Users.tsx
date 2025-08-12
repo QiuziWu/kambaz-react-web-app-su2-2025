@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
 import PeopleTable from "../Courses/People/Table";
 import * as client from "./client";
 import { FormControl } from "react-bootstrap";
@@ -39,7 +38,6 @@ export default function Users() {
             fetchUsers();
         }
     };
-    const { uid } = useParams();
     const fetchUsers = async () => {
         const users = await client.findAllUsers();
         setUsers(users);
