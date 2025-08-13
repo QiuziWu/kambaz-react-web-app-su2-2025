@@ -6,10 +6,17 @@ import { useDispatch } from "react-redux";
 import * as client from "./client";
 
 export default function Signin() {
-  const [credentials, setCredentials] = useState<any>({});
+  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
+  // 添加调试信息
+  console.log("Environment variables:", {
+      VITE_HTTP_SERVER: import.meta.env.VITE_HTTP_SERVER,
+      NODE_ENV: import.meta.env.NODE_ENV
+  });
+
   const signin = async () => {
     try {
       console.log("Attempting to signin with credentials:", credentials);
