@@ -52,9 +52,9 @@ const modulesSlice = createSlice({
                 m._id === action.payload ? { ...m, editing: true } : m
             );
         },
-        setModules: (state, action: PayloadAction<Module[]>) => {
-            state.modules = action.payload;
-        },
+        setModules: (state, { payload: modules }) => {
+            state.modules = modules;
+          },
     },
 });
 

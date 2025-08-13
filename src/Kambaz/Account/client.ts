@@ -4,6 +4,34 @@ export const USERS_API = `${HTTP_SERVER}/api/users`;
 export const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
+export const findCoursesForUser = async (userId: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${userId}/courses`);
+  return response.data;
+};
+
+export const enrollIntoCourse = async (userId: string, courseId: string) => {
+  try {
+    const response = await axiosWithCredentials.post(`${HTTP_SERVER}/api/enrollments`, {
+      user: userId,
+      course: courseId
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Enroll into course failed:", error);
+    throw error;
+  }
+};
+
+export const unenrollFromCourse = async (userId: string, courseId: string) => {
+  try {
+    await axiosWithCredentials.delete(`${HTTP_SERVER}/api/enrollments/user/${userId}/course/${courseId}`);
+    return true;
+  } catch (error: any) {
+    console.error("Unenroll from course failed:", error);
+    throw error;
+  }
+};
+
 export const findMyCourses = async () => {
   try {
     const { data } = await axiosWithCredentials.get(`${USERS_API}/current/courses`);
@@ -124,6 +152,7 @@ export const createUser = async (user: any) => {
   const response = await axiosWithCredentials.post(`${USERS_API}`, user);
   return response.data;
 };
+
 
 
 

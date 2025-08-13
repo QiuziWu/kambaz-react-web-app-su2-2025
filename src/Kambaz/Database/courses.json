@@ -7,7 +7,7 @@
     "endDate": "2023-05-15",
     "department": "D123",
     "credits": 4,
-    "description": "This course provides an in-depth study of the fundamentals of rocket propulsion, covering topics such as propulsion theory, engine types, fuel chemistry, and the practical applications of rocket technology. Designed for students with a strong background in physics and engineering, the course includes both theoretical instruction and hands-on laboratory work"
+    "description": "This course provides a comprehensive introduction to rocket propulsion systems, covering fundamental principles of rocket engines, fuel types, combustion processes, and nozzle design. Students will learn about the physics and engineering behind rocket propulsion, including thrust generation, specific impulse, and efficiency calculations. The course combines theoretical knowledge with practical applications, preparing students for careers in aerospace engineering and space exploration."
   },
   {
     "_id": "RS102",
@@ -80,5 +80,13 @@
     "credits": 4,
     "description": "This course explores the complex relationships and diplomatic interactions among the different races of Middle-earth: Elves, Men, Dwarves, and Wizards. Topics include the study of historical alliances, conflicts, and the role of leadership and wisdom in maintaining peace. Students will engage in discussions and case studies on key events in Middle-earth's history, such as the Council of Elrond and the War of the Ring, to understand the principles of diplomacy and conflict resolution in a multi-species context.",
     "author": "654f9ec2ea7ead465908d1e3"
+  },
+  {
+    "name": "Test Course",
+    "number": "TEST101",
+    "startDate": "2024-01-10",
+    "endDate": "2024-05-15",
+    "description": "This is a test course to verify database insertion",
+    "_id": "RS1755040650760"
   }
 ]

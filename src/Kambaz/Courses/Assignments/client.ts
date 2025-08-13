@@ -16,7 +16,7 @@ export const findAllAssignments = async () => {
 
 export const findAssignmentsForCourse = async (courseId: string) => {
     try {
-        const { data } = await axiosWithCredentials.get(`${ASSIGNMENTS_API}/course/${courseId}`);
+        const { data } = await axiosWithCredentials.get(`${HTTP_SERVER}/api/courses/${courseId}/assignments`);
         return data;
     } catch (error: any) {
         console.error("Find assignments for course failed:", error);

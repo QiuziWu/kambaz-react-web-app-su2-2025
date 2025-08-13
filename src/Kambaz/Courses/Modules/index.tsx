@@ -4,11 +4,11 @@ import ModuleControlButtons from "./ModuleControlButtons";
 import { FormControl, ListGroup } from "react-bootstrap";
 import LessonControlButtons from "./LessonControlButtons";
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { addModule, editModule, updateModule, deleteModule, setModules } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
-import * as userClient from "../../Account/client";
 import * as moduleClient from "./client";
+import * as courseClient from "../client";
 
 export default function Modules() {
   const { cid } = useParams();
@@ -17,59 +17,55 @@ export default function Modules() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
   const isFaculty = currentUser?.role === "FACULTY";
+  
+  console.log("Modules component - cid:", cid);
+  console.log("Modules component - modules:", modules);
+  console.log("Modules component - currentUser:", currentUser);
 
-  const fetchModules = async () => {
-    if (!cid) return;
-    try {
-      const modules = await userClient.findModulesForCourse(cid);
-      dispatch(setModules(modules));
-    } catch (error) {
-      console.error("Error fetching modules:", error);
-    }
-  };
-
-  const createModuleForCourse = async () => {
-    if (!cid || !moduleName.trim()) return;
-    try {
-      const newModule = await userClient.createModuleForCourse(cid, { name: moduleName });
-      dispatch(addModule(newModule));
-      setModuleName("");
-    } catch (error) {
-      console.error("Error creating module:", error);
-    }
-  };
-
-  const removeModule = async (moduleId: string) => {
-    try {
-      await moduleClient.deleteModule(moduleId);
-      dispatch(deleteModule(moduleId));
-    } catch (error) {
-      console.error("Error deleting module:", error);
-    }
+  const addModuleHandler = async () => {
+    const newModule = await courseClient.createModuleForCourse(cid!, {
+      name: moduleName,
+      course: cid,
+    });
+    dispatch(addModule(newModule));
+    setModuleName("");
   };
 
   useEffect(() => {
+    const fetchModules = async () => {
+      if (!cid) return;
+      try {
+        console.log("Fetching modules for course:", cid);
+        const modules = await courseClient.findModulesForCourse(cid);
+        console.log("Fetched modules:", modules);
+        dispatch(setModules(modules));
+      } catch (error) {
+        console.error("Error fetching modules:", error);
+      }
+    };
+
     if (cid) {
       fetchModules();
     }
   }, [cid, dispatch]);
 
-  const saveModule = async (module: any) => {
-    try {
-      await moduleClient.updateModule(module);
-      dispatch(updateModule(module));
-    } catch (error) {
-      console.error("Error updating module:", error);
-    }
+  const deleteModuleHandler = async (moduleId: string) => {
+    await moduleClient.deleteModule(moduleId);
+    dispatch(deleteModule(moduleId));
   };
 
+  const updateModuleHandler = async (module: any) => {
+    await moduleClient.updateModule(module);
+    dispatch(updateModule(module));
+  };
+ 
   return (
     <div>
       {/* Always render controls, but only show Add button if isFaculty */}
       <ModulesControls
+        addModule={addModuleHandler}
         setModuleName={setModuleName}
         moduleName={moduleName}
-        addModule={createModuleForCourse}
         isFaculty={isFaculty}
       />
       <br /><br /><br /><br />
@@ -81,18 +77,18 @@ export default function Modules() {
               {!module.editing && module.name}
               {module.editing && (
                 <FormControl className="w-50 d-inline-block"
-                  onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
-                  onKeyDown={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateModuleHandler({ ...module, name: e.target.value })}
+                  onKeyDown={(e: React.KeyboardEvent) => {
                     if (e.key === "Enter") {
-                      saveModule({ ...module, editing: false });
+                      updateModuleHandler({ ...module, editing: false });
                     }
                   }}
-                  defaultValue={module.name} />
+                  value={module.name} />
               )}
               {isFaculty && (
                 <ModuleControlButtons
                   moduleId={module._id}
-                  deleteModule={removeModule}
+                  deleteModule={(moduleId) => deleteModuleHandler(moduleId)}
                   editModule={(moduleId) => dispatch(editModule(moduleId))}
                 />
               )}

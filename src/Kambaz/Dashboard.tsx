@@ -2,27 +2,26 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaAlignJustify } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { setEnrollments } from "./Enrollments/reducer";
 import * as enrollmentClient from "./Enrollments/client";
 
 interface DashboardProps {
-    addCourse: (course: any) => Promise<void>;
-    updateCourse: (courseId: string, courseUpdates: any) => Promise<void>;
+    courses: any[];
+    course: any;
+    setCourse: (course: any) => void;
+    addNewCourse: (course: any) => Promise<void>;
     deleteCourse: (courseId: string) => Promise<void>;
+    updateCourse: (courseId: string, courseUpdates: any) => Promise<void>;
+    enrolling: boolean;
+    setEnrolling: (enrolling: boolean) => void;
+    updateEnrollment: (courseId: string, enrolled: boolean) => void;
 }
 
-export default function Dashboard({ addCourse, updateCourse, deleteCourse }: DashboardProps) {
+export default function Dashboard({ courses, course, setCourse, addNewCourse, updateCourse, deleteCourse, enrolling, setEnrolling, updateEnrollment }: { courses: any[]; course: any; setCourse: (course: any) => void; addNewCourse: (course: any) => Promise<void>; deleteCourse: (courseId: string) => Promise<void>; updateCourse: (courseId: string, courseUpdates: any) => Promise<void>; enrolling: boolean; setEnrolling: (enrolling: boolean) => void; updateEnrollment: (courseId: string, enrolled: boolean) => void; }) {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { courses } = useSelector((state: any) => state.coursesReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
-
-    const [course, setCourse] = useState<any>({
-        _id: "0", name: "New Course", number: "New Number",
-        startDate: "2023-09-10", endDate: "2023-12-15",
-        image: "/images/reactjs.jpg", description: "New Description"
-    });
 
     const fetchEnrollments = async () => {
         if (!currentUser) return;
@@ -36,12 +35,12 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
 
     const handleToggleEnrollment = async (courseId: string) => {
         if (!currentUser) return;
-        
+
         try {
-            const isEnrolled = enrollments.some((e: any) => 
+            const isEnrolled = enrollments.some((e: any) =>
                 e.user === currentUser._id && e.course === courseId
             );
-            
+
             if (isEnrolled) {
                 // Unenroll
                 await enrollmentClient.unenrollUserFromCourse(currentUser._id, courseId);
@@ -49,7 +48,7 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
                 // Enroll
                 await enrollmentClient.enrollUserInCourse(currentUser._id, courseId);
             }
-            
+
             // Refresh enrollments
             await fetchEnrollments();
         } catch (error) {
@@ -58,14 +57,14 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
     };
 
     const isEnrolledInCourse = (courseId: string) => {
-        return enrollments.some((e: any) => 
+        return enrollments.some((e: any) =>
             e.user === currentUser._id && e.course === courseId
         );
     };
 
     const handleAddCourse = async () => {
         try {
-            await addCourse(course);
+            await addNewCourse(course);
             // Reset form after successful addition
             setCourse({
                 _id: "0", name: "New Course", number: "New Number",
@@ -109,11 +108,12 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
 
     return (
         <div id="wd-dashboard">
-            <div className="d-flex justify-content-between align-items-center">
-                <h1 id="wd-dashboard-title" className="text-danger">
-                    <FaAlignJustify className="me-4 fs-4 mb-1" />Dashboard
-                </h1>
-            </div>
+            <h1 id="wd-dashboard-title" className="text-danger">
+                <FaAlignJustify className="me-4 fs-4 mb-1" />Dashboard
+                <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary" >
+                    {enrolling ? "My Courses" : "All Courses"}
+                </button>
+            </h1>
             <hr />
             {currentUser?.role === "FACULTY" && (
                 <>
@@ -141,7 +141,7 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
                 </>
             )}
             <h2 id="wd-dashboard-published">
-                My Enrolled Courses ({courses.length})
+                {enrolling ? "All Courses" : "My Enrolled Courses"} ({courses.length})
             </h2>
             <hr />
             <div id="wd-dashboard-courses">
@@ -151,9 +151,9 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
                             <Card>
                                 <Card.Img variant="top" src="/images/reactjs.jpg" width="100%" height={160} />
                                 <Card.Body className="card-body">
-                                    <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                                    <h5 className="wd-dashboard-course-title card-title">
                                         {course.name}
-                                    </Card.Title>
+                                    </h5>
                                     <Card.Text
                                         className="wd-dashboard-course-description overflow-hidden"
                                         style={{ height: "100px" }}
@@ -166,12 +166,17 @@ export default function Dashboard({ addCourse, updateCourse, deleteCourse }: Das
                                             <Link to={`/Kambaz/Courses/${course._id}/Home`}>
                                                 <Button variant="primary">Go</Button>
                                             </Link>
-                                            <Button
-                                                variant={isEnrolledInCourse(course._id) ? "danger" : "success"}
-                                                onClick={() => handleToggleEnrollment(course._id)}
-                                            >
-                                                {isEnrolledInCourse(course._id) ? "Unenroll" : "Enroll"}
-                                            </Button>
+                                            {enrolling && (
+                                                <button 
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        updateEnrollment(course._id, !course.enrolled);
+                                                    }}
+                                                    className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}
+                                                >
+                                                    {course.enrolled ? "Unenroll" : "Enroll"}
+                                                </button>
+                                            )}
                                         </>
 
                                         {currentUser?.role === "FACULTY" && (
