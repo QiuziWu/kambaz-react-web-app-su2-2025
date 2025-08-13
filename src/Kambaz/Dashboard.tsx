@@ -6,22 +6,12 @@ import { useEffect } from "react";
 import { setEnrollments } from "./Enrollments/reducer";
 import * as enrollmentClient from "./Enrollments/client";
 
-interface DashboardProps {
-    courses: any[];
-    course: any;
-    setCourse: (course: any) => void;
-    addNewCourse: (course: any) => Promise<void>;
-    deleteCourse: (courseId: string) => Promise<void>;
-    updateCourse: (courseId: string, courseUpdates: any) => Promise<void>;
-    enrolling: boolean;
-    setEnrolling: (enrolling: boolean) => void;
-    updateEnrollment: (courseId: string, enrolled: boolean) => void;
-}
+// DashboardProps interface removed as it's not being used
 
 export default function Dashboard({ courses, course, setCourse, addNewCourse, updateCourse, deleteCourse, enrolling, setEnrolling, updateEnrollment }: { courses: any[]; course: any; setCourse: (course: any) => void; addNewCourse: (course: any) => Promise<void>; deleteCourse: (courseId: string) => Promise<void>; updateCourse: (courseId: string, courseUpdates: any) => Promise<void>; enrolling: boolean; setEnrolling: (enrolling: boolean) => void; updateEnrollment: (courseId: string, enrolled: boolean) => void; }) {
     const dispatch = useDispatch();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
+    // enrollments variable removed as it's not being used
 
     const fetchEnrollments = async () => {
         if (!currentUser) return;
@@ -33,34 +23,9 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
         }
     };
 
-    const handleToggleEnrollment = async (courseId: string) => {
-        if (!currentUser) return;
+    // handleToggleEnrollment function removed as it's not being used
 
-        try {
-            const isEnrolled = enrollments.some((e: any) =>
-                e.user === currentUser._id && e.course === courseId
-            );
-
-            if (isEnrolled) {
-                // Unenroll
-                await enrollmentClient.unenrollUserFromCourse(currentUser._id, courseId);
-            } else {
-                // Enroll
-                await enrollmentClient.enrollUserInCourse(currentUser._id, courseId);
-            }
-
-            // Refresh enrollments
-            await fetchEnrollments();
-        } catch (error) {
-            console.error("Error toggling enrollment:", error);
-        }
-    };
-
-    const isEnrolledInCourse = (courseId: string) => {
-        return enrollments.some((e: any) =>
-            e.user === currentUser._id && e.course === courseId
-        );
-    };
+    // isEnrolledInCourse function removed as it's not being used
 
     const handleAddCourse = async () => {
         try {
