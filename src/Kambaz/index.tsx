@@ -90,7 +90,12 @@ export default function Kambaz() {
     const addCourse = async (course: any) => {
         try {
             const newCourse = await courseClient.createCourse(course);
-            dispatch(setCourses([...courses, newCourse]));
+            // After creating a course, refresh the courses list to ensure consistency
+            if (enrolling) {
+                await fetchCourses();
+            } else {
+                await findCoursesForUser();
+            }
         } catch (error: any) {
             console.error("Error creating course:", error);
         }
