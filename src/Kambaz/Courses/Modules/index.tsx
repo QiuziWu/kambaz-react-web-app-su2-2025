@@ -5,7 +5,7 @@ import { FormControl, ListGroup } from "react-bootstrap";
 import LessonControlButtons from "./LessonControlButtons";
 import { useParams } from "react-router";
 import React, { useState, useEffect } from "react";
-import { addModule, editModule, updateModule, deleteModule, setModules } from "./reducer";
+import { addModule, updateModule, deleteModule, setModules } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import * as moduleClient from "./client";
 import * as courseClient from "../client";

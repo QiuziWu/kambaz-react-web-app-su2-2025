@@ -1,7 +1,5 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 export default function AssignmentEditor({ assignmentData, setAssignmentData, addNewAssignment, updateAssignment }: { assignmentData: any, setAssignmentData: (data: any) => void, addNewAssignment: () => void, updateAssignment: () => void }) {
     const { cid, aid } = useParams();
