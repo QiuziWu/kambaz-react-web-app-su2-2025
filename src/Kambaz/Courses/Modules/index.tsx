@@ -15,6 +15,8 @@ export default function Modules() {
   const [moduleName, setModuleName] = useState("");
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [editingModuleName, setEditingModuleName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
@@ -41,13 +43,27 @@ export default function Modules() {
   useEffect(() => {
     const fetchModules = async () => {
       if (!cid) return;
+      setLoading(true);
+      setError(null);
       try {
         console.log("Fetching modules for course:", cid);
         const modules = await courseClient.findModulesForCourse(cid);
         console.log("Fetched modules:", modules);
-        dispatch(setModules(modules));
+        
+        // 验证返回的数据是否为数组
+        if (Array.isArray(modules)) {
+          dispatch(setModules(modules));
+        } else {
+          console.error("Invalid modules data received:", modules);
+          setError("Invalid data received from server");
+          dispatch(setModules([]));
+        }
       } catch (error) {
         console.error("Error fetching modules:", error);
+        setError("Failed to load modules. Please check your connection.");
+        dispatch(setModules([]));
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -118,43 +134,63 @@ export default function Modules() {
         isFaculty={isFaculty}
       />
       <br /><br /><br /><br />
-      <ListGroup id="wd-modules" className="rounded-0">
-        {modules.map((module: any) => (
-          <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" key={module._id}>
-            <div className="wd-title p-3 ps-2 bg-secondary">
-              <BsGripVertical className="me-2 fs-3" />
-              {editingModuleId !== module._id && module.name}
-              {editingModuleId === module._id && (
-                <FormControl 
-                  className="w-50 d-inline-block"
-                  value={editingModuleName}
-                  onChange={handleModuleNameChange}
-                  onKeyDown={handleModuleNameKeyDown}
-                  onBlur={saveModuleEdit}
-                  autoFocus
-                />
+      
+      {loading && (
+        <div className="text-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p>Loading modules...</p>
+        </div>
+      )}
+      
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          <strong>Error:</strong> {error}
+          <br />
+          <small>Please check your network connection and try refreshing the page.</small>
+        </div>
+      )}
+      
+      {!loading && !error && (
+        <ListGroup id="wd-modules" className="rounded-0">
+          {Array.isArray(modules) && modules.map((module: any) => (
+            <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" key={module._id}>
+              <div className="wd-title p-3 ps-2 bg-secondary">
+                <BsGripVertical className="me-2 fs-3" />
+                {editingModuleId !== module._id && module.name}
+                {editingModuleId === module._id && (
+                  <FormControl 
+                    className="w-50 d-inline-block"
+                    value={editingModuleName}
+                    onChange={handleModuleNameChange}
+                    onKeyDown={handleModuleNameKeyDown}
+                    onBlur={saveModuleEdit}
+                    autoFocus
+                  />
+                )}
+                {isFaculty && (
+                  <ModuleControlButtons
+                    moduleId={module._id}
+                    deleteModule={(moduleId) => deleteModuleHandler(moduleId)}
+                    editModule={(moduleId) => startEditingModule(moduleId, module.name)}
+                  />
+                )}
+              </div>
+              {module.lessons && Array.isArray(module.lessons) && (
+                <ListGroup className="wd-lessons rounded-0">
+                  {module.lessons.map((lesson: any) => (
+                    <ListGroup.Item className="wd-lesson p-3 ps-1" key={lesson._id}>
+                      <BsGripVertical className="me-2 fs-3" /> {lesson.name}
+                      {isFaculty && <LessonControlButtons />}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               )}
-              {isFaculty && (
-                <ModuleControlButtons
-                  moduleId={module._id}
-                  deleteModule={(moduleId) => deleteModuleHandler(moduleId)}
-                  editModule={(moduleId) => startEditingModule(moduleId, module.name)}
-                />
-              )}
-            </div>
-            {module.lessons && (
-              <ListGroup className="wd-lessons rounded-0">
-                {module.lessons.map((lesson: any) => (
-                  <ListGroup.Item className="wd-lesson p-3 ps-1" key={lesson._id}>
-                    <BsGripVertical className="me-2 fs-3" /> {lesson.name}
-                    {isFaculty && <LessonControlButtons />}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            )}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      )}
     </div>
   );
 }

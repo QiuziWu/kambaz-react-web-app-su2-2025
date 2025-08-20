@@ -1,6 +1,7 @@
 import axios from "axios";
+const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER || "http://localhost:4000";
+const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
-const COURSES_API = `/api/courses`;
 
 export const createCourse = async (course: any) => {
   const { data } = await axiosWithCredentials.post(COURSES_API, course);
