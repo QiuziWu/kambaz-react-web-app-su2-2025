@@ -140,24 +140,39 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                         {course.description}
                                     </Card.Text>
 
-                                    <div className="d-flex justify-content-between align-items-center">
+                                    <div className="d-flex justify-content-between align-items-center" style={{position: 'relative', zIndex: 999}}>
                                         <>
                                             <Link to={`/Kambaz/Courses/${course._id}/Home`}>
                                                 <Button variant="primary">Go</Button>
                                             </Link>
                                             {enrolling ? (
-                                                <button 
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        console.log("Enroll button clicked for course:", course._id);
-                                                        console.log("Current enrolled state:", course.enrolled);
-                                                        console.log("Will set enrolled to:", !course.enrolled);
-                                                        updateEnrollment(course._id, !course.enrolled);
-                                                    }}
-                                                    className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}
-                                                >
-                                                    {course.enrolled ? "Unenroll" : "Enroll"}
-                                                </button>
+                                                <>
+                                                    <button 
+                                                        onClick={(event) => {
+                                                            event.preventDefault();
+                                                            event.stopPropagation();
+                                                            console.log("Enroll button clicked for course:", course._id);
+                                                            console.log("Current enrolled state:", course.enrolled);
+                                                            console.log("Will set enrolled to:", !course.enrolled);
+                                                            updateEnrollment(course._id, !course.enrolled);
+                                                        }}
+                                                        className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}
+                                                        style={{zIndex: 1000, position: 'relative'}}
+                                                        id={`enroll-btn-${course._id}`}
+                                                    >
+                                                        {course.enrolled ? "Unenroll" : "Enroll"}
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => {
+                                                            console.log("Test button clicked for course:", course._id);
+                                                            alert("Test button works!");
+                                                        }}
+                                                        className="btn btn-info btn-sm ms-1"
+                                                        style={{zIndex: 1000, position: 'relative'}}
+                                                    >
+                                                        Test
+                                                    </button>
+                                                </>
                                             ) : (
                                                 <div style={{fontSize: '10px', color: 'red'}}>enroll button hidden (enrolling=false)</div>
                                             )}
