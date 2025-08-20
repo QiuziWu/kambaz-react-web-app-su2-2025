@@ -85,7 +85,7 @@ export default function Kambaz() {
 
     const addCourse = async (course: any) => {
         try {
-            const result = await courseClient.createCourse(course);
+            await courseClient.createCourse(course);
             // After creating a course, refresh the courses list to ensure consistency
             // Always refresh the appropriate course list based on current state
             if (enrolling) {
