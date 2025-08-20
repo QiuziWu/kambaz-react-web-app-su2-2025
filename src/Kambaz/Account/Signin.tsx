@@ -10,25 +10,14 @@ export default function Signin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // 添加调试信息
-  console.log("Environment variables:", {
-      VITE_HTTP_SERVER: import.meta.env.VITE_HTTP_SERVER,
-      NODE_ENV: import.meta.env.NODE_ENV
-  });
 
   const signin = async () => {
     try {
-      console.log("Attempting to signin with credentials:", credentials);
-      
       const user = await client.signin(credentials);
-      console.log("Signin successful:", user);
       
       dispatch(setCurrentUser(user));
       navigate("/Kambaz/Dashboard");
     } catch (error: any) {
-      console.error("Signin failed:", error);
-      console.error("Error status:", error.response?.status);
-      console.error("Error message:", error.response?.data);
       alert("Login failed. Please check your username and password.");
     }
   };

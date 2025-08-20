@@ -27,9 +27,7 @@ export default function Kambaz() {
     const findCoursesForUser = async () => {
         if (!currentUser) return;
         try {
-            console.log("Fetching courses for user:", currentUser._id);
             const courses = await userClient.findCoursesForUser(currentUser._id);
-            console.log("Courses returned for user:", courses);
             dispatch(setCourses(courses));
         } catch (error) {
             console.error(error);
@@ -39,13 +37,11 @@ export default function Kambaz() {
     const updateEnrollment = async (courseId: string, enrolled: boolean) => {
         if (!currentUser) return;
         try {
-            console.log(`Updating enrollment for course ${courseId}: ${enrolled ? 'enroll' : 'unenroll'}`);
             if (enrolled) {
                 await userClient.enrollIntoCourse(currentUser._id, courseId);
             } else {
                 await userClient.unenrollFromCourse(currentUser._id, courseId);
             }
-            console.log("Enrollment update completed, refreshing course list");
             
             // Refresh the course list from server to ensure consistency
             if (enrolling) {
@@ -71,24 +67,15 @@ export default function Kambaz() {
     const fetchCourses = async () => {
         if (!currentUser) return;
         try {
-            console.log("Fetching all courses...");
             const allCourses = await courseClient.fetchAllCourses();
-            console.log("All courses:", allCourses);
-            
-            console.log("Fetching enrolled courses for user:", currentUser._id);
             const enrolledCourses = await userClient.findCoursesForUser(
                 currentUser._id
             );
-            console.log("Enrolled courses:", enrolledCourses);
-            
             const courses = allCourses.map((course: any) => {
                 const isEnrolled = enrolledCourses.find((c: any) => c._id === course._id);
                 const courseWithEnrollment = { ...course, enrolled: !!isEnrolled };
-                console.log(`Course ${course._id} (${course.name}): enrolled = ${!!isEnrolled}`);
                 return courseWithEnrollment;
             });
-            
-            console.log("Final courses with enrollment status:", courses);
             dispatch(setCourses(courses));
         } catch (error) {
             console.error(error);
@@ -97,21 +84,15 @@ export default function Kambaz() {
 
 
     const addCourse = async (course: any) => {
-        console.log("addCourse function called with:", course);
-        console.log("Current enrolling state:", enrolling);
         try {
             const result = await courseClient.createCourse(course);
-            console.log("Course created successfully:", result);
             // After creating a course, refresh the courses list to ensure consistency
             // Always refresh the appropriate course list based on current state
             if (enrolling) {
-                console.log("Refreshing all courses (enrolling mode)");
                 await fetchCourses();
             } else {
-                console.log("Refreshing user courses (non-enrolling mode)");
                 await findCoursesForUser();
             }
-            console.log("Course list refresh completed");
         } catch (error: any) {
             console.error("Error creating course:", error);
         }
@@ -143,16 +124,11 @@ export default function Kambaz() {
 
     useEffect(() => {
         if (!currentUser) return;
-        
-        console.log("useEffect triggered - enrolling state:", enrolling);
         // Always fetch enrollments when user is logged in
         fetchEnrollments();
-        
         if (enrolling) {
-            console.log("Fetching all courses (enrolling mode)");
             fetchCourses();
         } else {
-            console.log("Fetching user courses (non-enrolling mode)");
             findCoursesForUser();
         }
     }, [currentUser, enrolling]);
@@ -160,7 +136,6 @@ export default function Kambaz() {
     // Separate useEffect for enrollments to ensure it loads immediately when user is available
     useEffect(() => {
         if (currentUser) {
-            console.log("Kambaz - Fetching enrollments for user:", currentUser._id);
             fetchEnrollments();
         }
     }, [currentUser]);

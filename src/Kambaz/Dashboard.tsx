@@ -12,8 +12,6 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    console.log("Dashboard - currentUser:", currentUser);
-    console.log("Dashboard - currentUser role:", currentUser?.role);
     // enrollments variable removed as it's not being used
 
     const fetchEnrollments = async () => {
@@ -31,12 +29,8 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
     // isEnrolledInCourse function removed as it's not being used
 
     const handleAddCourse = async () => {
-        console.log("Add button clicked!");
-        console.log("Current course data:", course);
-        
         try {
             await addNewCourse(course);
-            console.log("Course added successfully!");
             // Reset form after successful addition
             setCourse({
                 _id: "0", name: "New Course", number: "New Number",
@@ -74,11 +68,9 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
 
     useEffect(() => {
         if (!currentUser) {
-            console.log("No current user, redirecting to signin");
             navigate("/Kambaz/Account/Signin");
             return;
         }
-        console.log("Current user found, fetching enrollments");
         fetchEnrollments();
     }, [currentUser, navigate]);
 
@@ -90,9 +82,6 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                     {enrolling ? "My Courses" : "All Courses"}
                 </button>
             </h1>
-            <div style={{fontSize: '12px', color: 'gray', marginBottom: '10px'}}>
-                Debug: enrolling = {enrolling ? 'true' : 'false'}, courses count = {courses.length}
-            </div>
             <hr />
             {currentUser?.role === "FACULTY" && (
                 <>
@@ -140,41 +129,21 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                         {course.description}
                                     </Card.Text>
 
-                                    <div className="d-flex justify-content-between align-items-center" style={{position: 'relative', zIndex: 999}}>
+                                    <div className="d-flex justify-content-between align-items-center">
                                         <>
                                             <Link to={`/Kambaz/Courses/${course._id}/Home`}>
                                                 <Button variant="primary">Go</Button>
                                             </Link>
-                                            {enrolling ? (
-                                                <>
-                                                    <button 
-                                                        onClick={(event) => {
-                                                            event.preventDefault();
-                                                            event.stopPropagation();
-                                                            console.log("Enroll button clicked for course:", course._id);
-                                                            console.log("Current enrolled state:", course.enrolled);
-                                                            console.log("Will set enrolled to:", !course.enrolled);
-                                                            updateEnrollment(course._id, !course.enrolled);
-                                                        }}
-                                                        className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}
-                                                        style={{zIndex: 1000, position: 'relative'}}
-                                                        id={`enroll-btn-${course._id}`}
-                                                    >
-                                                        {course.enrolled ? "Unenroll" : "Enroll"}
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => {
-                                                            console.log("Test button clicked for course:", course._id);
-                                                            alert("Test button works!");
-                                                        }}
-                                                        className="btn btn-info btn-sm ms-1"
-                                                        style={{zIndex: 1000, position: 'relative'}}
-                                                    >
-                                                        Test
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <div style={{fontSize: '10px', color: 'red'}}>enroll button hidden (enrolling=false)</div>
+                                            {enrolling && (
+                                                <button 
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        updateEnrollment(course._id, !course.enrolled);
+                                                    }}
+                                                    className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}
+                                                >
+                                                    {course.enrolled ? "Unenroll" : "Enroll"}
+                                                </button>
                                             )}
                                         </>
 
