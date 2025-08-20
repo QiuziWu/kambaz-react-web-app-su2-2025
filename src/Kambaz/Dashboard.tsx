@@ -146,6 +146,9 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                                 <button 
                                                     onClick={(event) => {
                                                         event.preventDefault();
+                                                        console.log("Enroll button clicked for course:", course._id);
+                                                        console.log("Current enrolled state:", course.enrolled);
+                                                        console.log("Will set enrolled to:", !course.enrolled);
                                                         updateEnrollment(course._id, !course.enrolled);
                                                     }}
                                                     className={`btn ${course.enrolled ? "btn-danger" : "btn-success"}`}

@@ -11,10 +11,12 @@ export const findCoursesForUser = async (userId: string) => {
 
 export const enrollIntoCourse = async (userId: string, courseId: string) => {
   try {
+    console.log("Making enrollment request for user:", userId, "course:", courseId);
     const response = await axiosWithCredentials.post(`${HTTP_SERVER}/api/enrollments`, {
       user: userId,
       course: courseId
     });
+    console.log("Enrollment response:", response.data);
     return response.data;
   } catch (error: any) {
     console.error("Enroll into course failed:", error);
