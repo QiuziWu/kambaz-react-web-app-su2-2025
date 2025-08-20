@@ -27,7 +27,9 @@ export default function Kambaz() {
     const findCoursesForUser = async () => {
         if (!currentUser) return;
         try {
+            console.log("Fetching courses for user:", currentUser._id);
             const courses = await userClient.findCoursesForUser(currentUser._id);
+            console.log("Courses returned for user:", courses);
             dispatch(setCourses(courses));
         } catch (error) {
             console.error(error);
@@ -89,15 +91,20 @@ export default function Kambaz() {
 
     const addCourse = async (course: any) => {
         console.log("addCourse function called with:", course);
+        console.log("Current enrolling state:", enrolling);
         try {
             const result = await courseClient.createCourse(course);
             console.log("Course created successfully:", result);
             // After creating a course, refresh the courses list to ensure consistency
+            // Always refresh the appropriate course list based on current state
             if (enrolling) {
+                console.log("Refreshing all courses (enrolling mode)");
                 await fetchCourses();
             } else {
+                console.log("Refreshing user courses (non-enrolling mode)");
                 await findCoursesForUser();
             }
+            console.log("Course list refresh completed");
         } catch (error: any) {
             console.error("Error creating course:", error);
         }
