@@ -1,41 +1,27 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 export default function AssignmentEditor({ assignmentData, setAssignmentData, addNewAssignment, updateAssignment }: { assignmentData: any, setAssignmentData: (data: any) => void, addNewAssignment: () => void, updateAssignment: () => void }) {
     const { cid, aid } = useParams();
-    const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-    const isNew = aid === "new";
+    const location = useLocation();
+    const isNew = aid === "new" || location.pathname.includes("/new");
     const saveChange = () => {
+        console.log("AssignmentEditor - saveChange called");
+        console.log("AssignmentEditor - aid:", aid);
+        console.log("AssignmentEditor - location.pathname:", location.pathname);
+        console.log("AssignmentEditor - isNew:", isNew);
+        
         if (isNew) {
+            console.log("AssignmentEditor - calling addNewAssignment");
             addNewAssignment();
         }
         else {
+            console.log("AssignmentEditor - calling updateAssignment");
             updateAssignment();
         }
     }
-    useEffect(() => {
-        let assignment;
-        if (isNew) {
-            assignment = {
-                title: "New Assignment",
-                description: "",
-                course: cid,
-                available_from_date: "",
-                available_from_time: "12:00",
-                available_until_date: "",
-                available_until_time: "23:59",
-                dueDate: "",
-                dueTime: "23:59",
-                points: 0
-            }
-        }
-        else {
-            assignment = assignments.find((assignment: any) => assignment._id === aid)
-        }
-        setAssignmentData(assignment);
-    }, [isNew, aid, cid, assignments])
     return (
         <div id="wd-assignments-editor">
             <Form>
@@ -117,7 +103,7 @@ export default function AssignmentEditor({ assignmentData, setAssignmentData, ad
             <hr />
             <div className="float-end">
                 <Button as={Link as any} to={`/Kambaz/Courses/${cid}/Assignments`} variant="secondary">Cancel</Button>
-                <Button as={Link as any} to={`/Kambaz/Courses/${cid}/Assignments`} variant="danger" className="ms-2" onClick={saveChange}>Save</Button>
+                <Button variant="danger" className="ms-2" onClick={saveChange}>Save</Button>
             </div>
         </div>
     );

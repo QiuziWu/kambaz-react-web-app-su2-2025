@@ -88,5 +88,59 @@
     "endDate": "2024-05-15",
     "description": "This is a test course to verify database insertion",
     "_id": "RS1755040650760"
+  },
+  {
+    "_id": "RS1755659426698",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
+  },
+  {
+    "_id": "RS1755659431532",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
+  },
+  {
+    "_id": "RS1755659505520",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
+  },
+  {
+    "_id": "RS1755659510021",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
+  },
+  {
+    "_id": "RS1755659521698",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
+  },
+  {
+    "_id": "RS1755659935987",
+    "name": "New Course",
+    "number": "New Number",
+    "startDate": "2023-09-10",
+    "endDate": "2023-12-15",
+    "image": "/images/reactjs.jpg",
+    "description": "New Description"
   }
 ]

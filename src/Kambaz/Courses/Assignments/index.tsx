@@ -22,10 +22,18 @@ export default function Assignments() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [assignmentToDelete, setAssignmentToDelete] = useState<any>(null);
 
+    // 添加调试信息
+    console.log("Assignments component - cid:", cid);
+    console.log("Assignments component - all assignments:", assignments);
+    console.log("Assignments component - courseAssignments:", courseAssignments);
+    console.log("Assignments component - currentUser:", currentUser);
+
     const fetchAssignments = async () => {
         if (!cid) return;
         try {
+            console.log("Fetching assignments for course:", cid);
             const assignments = await assignmentClient.findAssignmentsForCourse(cid);
+            console.log("Fetched assignments:", assignments);
             dispatch(setAssignments(assignments));
         } catch (error) {
             console.error("Error fetching assignments:", error);
@@ -72,45 +80,57 @@ export default function Assignments() {
                         <AssignmentGroupButtons />
                     </div>
                     <ListGroup className="wd-assignments rounded-0">
-                        {courseAssignments.map((a: any) => (
-                            <ListGroup.Item
-                                key={a._id}
-                                className="wd-assignments p-3 ps-1"
-                            >
-                                <div className="d-flex align-items-center">
-                                    <BsGripVertical className="me-2 fs-3" />
-                                    <MdOutlineAssignment className="me-3 fs-3 text-success" />
-                                    <div>
-                                        {isFaculty ? (
-                                            <Link to={`/Kambaz/Courses/${cid}/Assignments/${a._id}`} className="wd-assignment-link">
-                                                {a.title}
-                                            </Link>
-                                        ) : (
-                                            <div className="wd-assignment-link text-dark" style={{ cursor: "default" }}>
-                                                {a.title}
-                                            </div>
-                                        )}
-
-                                        <div style={{ fontSize: "0.825rem" }}>
-                                            <span className="text-danger">Multiple Modules</span> |{" "}
-                                            <b> Not available until </b>{a.available}  |  <br />
-                                            <b>Due</b> {a.due} | {a.points} pts
-                                        </div>
-                                    </div>
-
-                                    <div className="ms-auto d-flex align-items-center">
-                                        {isFaculty && (
-                                            <FaTrash
-                                                className="text-danger me-2"
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() => handleDeleteClick(a)}
-                                            />
-                                        )}
-                                        <AssignmentButtons />
-                                    </div>
-                                </div>
+                        {courseAssignments.length === 0 ? (
+                            <ListGroup.Item className="wd-assignments p-3 ps-1">
+                                <div className="text-muted">No assignments found for this course.</div>
                             </ListGroup.Item>
-                        ))}
+                        ) : (
+                            courseAssignments.map((a: any) => {
+                                console.log("Rendering assignment:", a);
+                                const assignmentLink = `/Kambaz/Courses/${cid}/Assignments/${a._id}`;
+                                console.log("Assignment link:", assignmentLink);
+                                
+                                return (
+                                    <ListGroup.Item
+                                        key={a._id}
+                                        className="wd-assignments p-3 ps-1"
+                                    >
+                                        <div className="d-flex align-items-center">
+                                            <BsGripVertical className="me-2 fs-3" />
+                                            <MdOutlineAssignment className="me-3 fs-3 text-success" />
+                                            <div>
+                                                {isFaculty ? (
+                                                    <Link to={assignmentLink} className="wd-assignment-link">
+                                                        {a.title}
+                                                    </Link>
+                                                ) : (
+                                                    <div className="wd-assignment-link text-dark" style={{ cursor: "default" }}>
+                                                        {a.title}
+                                                    </div>
+                                                )}
+
+                                                <div style={{ fontSize: "0.825rem" }}>
+                                                    <span className="text-danger">Multiple Modules</span> |{" "}
+                                                    <b> Not available until </b>{a.available}  |  <br />
+                                                    <b>Due</b> {a.due} | {a.points} pts
+                                                </div>
+                                            </div>
+
+                                            <div className="ms-auto d-flex align-items-center">
+                                                {isFaculty && (
+                                                    <FaTrash
+                                                        className="text-danger me-2"
+                                                        style={{ cursor: "pointer" }}
+                                                        onClick={() => handleDeleteClick(a)}
+                                                    />
+                                                )}
+                                                <AssignmentButtons />
+                                            </div>
+                                        </div>
+                                    </ListGroup.Item>
+                                );
+                            })
+                        )}
                     </ListGroup>
                 </ListGroup.Item>
             </ListGroup>

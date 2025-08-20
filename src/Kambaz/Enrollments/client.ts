@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER;
+const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER || "http://localhost:4000";
 const ENROLLMENTS_API = `${HTTP_SERVER}/api/enrollments`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 

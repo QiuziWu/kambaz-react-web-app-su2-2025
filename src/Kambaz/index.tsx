@@ -9,8 +9,10 @@ import CourseProtectedRoute from "./Courses/CourseProtectedRoute";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourses } from "./Courses/reducer";
+import { setEnrollments } from "./Enrollments/reducer";
 import * as courseClient from "./Courses/client";
 import * as userClient from "./Account/client";
+import * as enrollmentClient from "./Enrollments/client";
 
 export default function Kambaz() {
     const dispatch = useDispatch();
@@ -51,6 +53,16 @@ export default function Kambaz() {
             dispatch(setCourses(updatedCourses));
         } catch (error) {
             console.error("Error updating enrollment:", error);
+        }
+    };
+
+    const fetchEnrollments = async () => {
+        if (!currentUser) return;
+        try {
+            const enrollments = await enrollmentClient.findEnrollmentsForUser(currentUser._id);
+            dispatch(setEnrollments(enrollments));
+        } catch (error) {
+            console.error("Error fetching enrollments:", error);
         }
     };
 
@@ -111,12 +123,23 @@ export default function Kambaz() {
     useEffect(() => {
         if (!currentUser) return;
         
+        // Always fetch enrollments when user is logged in
+        fetchEnrollments();
+        
         if (enrolling) {
             fetchCourses();
         } else {
             findCoursesForUser();
         }
     }, [currentUser, enrolling]);
+
+    // Separate useEffect for enrollments to ensure it loads immediately when user is available
+    useEffect(() => {
+        if (currentUser) {
+            console.log("Kambaz - Fetching enrollments for user:", currentUser._id);
+            fetchEnrollments();
+        }
+    }, [currentUser]);
 
     return (
         <div id="wd-kambaz">

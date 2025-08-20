@@ -1,5 +1,5 @@
 import axios from "axios";
-export const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER;
+export const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER || "http://localhost:4000";
 export const USERS_API = `${HTTP_SERVER}/api/users`;
 export const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const axiosWithCredentials = axios.create({ withCredentials: true });

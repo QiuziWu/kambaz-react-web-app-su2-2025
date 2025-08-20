@@ -13,6 +13,8 @@ import * as courseClient from "../client";
 export default function Modules() {
   const { cid } = useParams();
   const [moduleName, setModuleName] = useState("");
+  const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
+  const [editingModuleName, setEditingModuleName] = useState("");
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
@@ -23,12 +25,17 @@ export default function Modules() {
   console.log("Modules component - currentUser:", currentUser);
 
   const addModuleHandler = async () => {
-    const newModule = await courseClient.createModuleForCourse(cid!, {
-      name: moduleName,
-      course: cid,
-    });
-    dispatch(addModule(newModule));
-    setModuleName("");
+    try {
+      const newModule = await courseClient.createModuleForCourse(cid!, {
+        name: moduleName,
+        course: cid,
+      });
+      dispatch(addModule(newModule));
+      setModuleName("");
+    } catch (error) {
+      console.error("Error creating module:", error);
+      alert("Failed to create module. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -50,13 +57,55 @@ export default function Modules() {
   }, [cid, dispatch]);
 
   const deleteModuleHandler = async (moduleId: string) => {
-    await moduleClient.deleteModule(moduleId);
-    dispatch(deleteModule(moduleId));
+    try {
+      console.log("Deleting module:", moduleId);
+      await moduleClient.deleteModule(moduleId);
+      dispatch(deleteModule(moduleId));
+      console.log("Module deleted successfully");
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      alert("Failed to delete module. Please try again.");
+    }
   };
 
-  const updateModuleHandler = async (module: any) => {
-    await moduleClient.updateModule(module);
-    dispatch(updateModule(module));
+  const startEditingModule = (moduleId: string, currentName: string) => {
+    setEditingModuleId(moduleId);
+    setEditingModuleName(currentName);
+  };
+
+  const saveModuleEdit = async () => {
+    if (!editingModuleId) return;
+    
+    try {
+      const moduleToUpdate = modules.find((m: any) => m._id === editingModuleId);
+      if (!moduleToUpdate) return;
+      
+      const updatedModule = { ...moduleToUpdate, name: editingModuleName };
+      await moduleClient.updateModule(updatedModule);
+      dispatch(updateModule(updatedModule));
+      setEditingModuleId(null);
+      setEditingModuleName("");
+    } catch (error) {
+      console.error("Error updating module:", error);
+      alert("Failed to update module. Please try again.");
+    }
+  };
+
+  const cancelModuleEdit = () => {
+    setEditingModuleId(null);
+    setEditingModuleName("");
+  };
+
+  const handleModuleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingModuleName(e.target.value);
+  };
+
+  const handleModuleNameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      saveModuleEdit();
+    } else if (e.key === "Escape") {
+      cancelModuleEdit();
+    }
   };
  
   return (
@@ -74,22 +123,22 @@ export default function Modules() {
           <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray" key={module._id}>
             <div className="wd-title p-3 ps-2 bg-secondary">
               <BsGripVertical className="me-2 fs-3" />
-              {!module.editing && module.name}
-              {module.editing && (
-                <FormControl className="w-50 d-inline-block"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateModuleHandler({ ...module, name: e.target.value })}
-                  onKeyDown={(e: React.KeyboardEvent) => {
-                    if (e.key === "Enter") {
-                      updateModuleHandler({ ...module, editing: false });
-                    }
-                  }}
-                  value={module.name} />
+              {editingModuleId !== module._id && module.name}
+              {editingModuleId === module._id && (
+                <FormControl 
+                  className="w-50 d-inline-block"
+                  value={editingModuleName}
+                  onChange={handleModuleNameChange}
+                  onKeyDown={handleModuleNameKeyDown}
+                  onBlur={saveModuleEdit}
+                  autoFocus
+                />
               )}
               {isFaculty && (
                 <ModuleControlButtons
                   moduleId={module._id}
                   deleteModule={(moduleId) => deleteModuleHandler(moduleId)}
-                  editModule={(moduleId) => dispatch(editModule(moduleId))}
+                  editModule={(moduleId) => startEditingModule(moduleId, module.name)}
                 />
               )}
             </div>

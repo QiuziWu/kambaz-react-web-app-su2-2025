@@ -46,6 +46,14 @@ console.log('First course:', coursesData[0]?.name);
 const modulesData = JSON.parse(readFileSync(join(__dirname, 'src/Kambaz/Database/modules.json'), 'utf8'));
 console.log('Loaded modules data:', modulesData.length, 'modules');
 
+// 读取作业数据
+const assignmentsData = JSON.parse(readFileSync(join(__dirname, 'src/Kambaz/Database/assignments.json'), 'utf8'));
+console.log('Loaded assignments data:', assignmentsData.length, 'assignments');
+
+// 读取注册数据
+const enrollmentsData = JSON.parse(readFileSync(join(__dirname, 'src/Kambaz/Database/enrollments.json'), 'utf8'));
+console.log('Loaded enrollments data:', enrollmentsData.length, 'enrollments');
+
 // 用户登录API
 app.post('/api/users/signin', (req, res) => {
   const { username, password } = req.body;
@@ -209,8 +217,15 @@ app.get('/api/courses/:courseId/users', (req, res) => {
 // 获取课程作业
 app.get('/api/courses/:courseId/assignments', (req, res) => {
   const { courseId } = req.params;
+  console.log('API called: /api/courses/:courseId/assignments');
+  console.log('Course ID:', courseId);
+  console.log('Assignments data length:', assignmentsData.length);
+  console.log('All assignments:', assignmentsData);
+  
   const courseAssignments = assignmentsData.filter(assignment => assignment.course === courseId);
   console.log(`Fetching assignments for course ${courseId}:`, courseAssignments.length, 'assignments');
+  console.log('Filtered assignments:', courseAssignments);
+  
   res.json(courseAssignments);
 });
 
@@ -329,13 +344,6 @@ app.delete('/api/modules/:moduleId', (req, res) => {
     res.status(404).json({ message: 'Module not found' });
   }
 });
-
-// 读取注册数据
-const enrollmentsData = JSON.parse(readFileSync(join(__dirname, 'src/Kambaz/Database/enrollments.json'), 'utf8'));
-
-// 读取作业数据
-const assignmentsData = JSON.parse(readFileSync(join(__dirname, 'src/Kambaz/Database/assignments.json'), 'utf8'));
-console.log('Loaded assignments data:', assignmentsData.length, 'assignments');
 
 // 获取所有注册信息
 app.get('/api/enrollments', (req, res) => {

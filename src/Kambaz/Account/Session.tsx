@@ -16,8 +16,17 @@ export default function Session({ children }: { children: any }) {
     };
     useEffect(() => {
         fetchProfile();
-    }, []);
-    if (!pending) {
-        return children;
+    }, [dispatch]);
+    
+    if (pending) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
     }
+    
+    return children;
 }

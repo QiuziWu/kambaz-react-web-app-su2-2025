@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER;
+const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER || "http://localhost:4000";
 const ASSIGNMENTS_API = `${HTTP_SERVER}/api/assignments`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
@@ -16,7 +16,7 @@ export const findAllAssignments = async () => {
 
 export const findAssignmentsForCourse = async (courseId: string) => {
     try {
-        const { data } = await axiosWithCredentials.get(`${HTTP_SERVER}/api/courses/${courseId}/assignments`);
+        const { data } = await axiosWithCredentials.get(`${ASSIGNMENTS_API}/course/${courseId}`);
         return data;
     } catch (error: any) {
         console.error("Find assignments for course failed:", error);
