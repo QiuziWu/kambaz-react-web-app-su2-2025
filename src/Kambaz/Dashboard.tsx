@@ -145,21 +145,32 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                                     {course.enrolled ? "Unenroll" : "Enroll"}
                                                 </button>
                                             )}
+                                            {!enrolling && (
+                                                <button
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        updateEnrollment(course._id, false);
+                                                    }}
+                                                    className="btn btn-danger"
+                                                >
+                                                    Unenroll
+                                                </button>
+                                            )}
                                         </>
 
+                                        {currentUser?.role === "FACULTY" && enrolling && (
+                                            <button onClick={() => handleDeleteCourse(course._id)}
+                                                className="btn btn-danger"
+                                                id="wd-delete-course-click">
+                                                Delete
+                                            </button>
+                                        )}
                                         {currentUser?.role === "FACULTY" && (
-                                            <>
-                                                <button onClick={() => handleDeleteCourse(course._id)}
-                                                    className="btn btn-danger"
-                                                    id="wd-delete-course-click">
-                                                    Delete
-                                                </button>
-                                                <button id="wd-edit-course-click"
-                                                    onClick={() => setCourse(course)}
-                                                    className="btn btn-warning me-2">
-                                                    Edit
-                                                </button>
-                                            </>
+                                            <button id="wd-edit-course-click"
+                                                onClick={() => setCourse(course)}
+                                                className="btn btn-warning me-2">
+                                                Edit
+                                            </button>
                                         )}
                                     </div>
                                 </Card.Body>

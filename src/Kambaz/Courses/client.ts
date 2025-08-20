@@ -4,16 +4,8 @@ const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 export const createCourse = async (course: any) => {
-  console.log("Making POST request to:", COURSES_API);
-  console.log("Request data:", course);
-  try {
-    const { data } = await axiosWithCredentials.post(COURSES_API, course);
-    console.log("Response data:", data);
-    return data;
-  } catch (error) {
-    console.error("Error in createCourse:", error);
-    throw error;
-  }
+  const { data } = await axiosWithCredentials.post(COURSES_API, course);
+  return data;
 };
 
 export const fetchAllCourses = async () => {
