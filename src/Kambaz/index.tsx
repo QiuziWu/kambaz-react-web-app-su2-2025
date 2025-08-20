@@ -39,20 +39,20 @@ export default function Kambaz() {
     const updateEnrollment = async (courseId: string, enrolled: boolean) => {
         if (!currentUser) return;
         try {
+            console.log(`Updating enrollment for course ${courseId}: ${enrolled ? 'enroll' : 'unenroll'}`);
             if (enrolled) {
                 await userClient.enrollIntoCourse(currentUser._id, courseId);
             } else {
                 await userClient.unenrollFromCourse(currentUser._id, courseId);
             }
-            // Update the courses state to reflect the enrollment change
-            const updatedCourses = courses.map((course: any) => {
-                if (course._id === courseId) {
-                    return { ...course, enrolled: enrolled };
-                } else {
-                    return course;
-                }
-            });
-            dispatch(setCourses(updatedCourses));
+            console.log("Enrollment update completed, refreshing course list");
+            
+            // Refresh the course list from server to ensure consistency
+            if (enrolling) {
+                await fetchCourses();
+            } else {
+                await findCoursesForUser();
+            }
         } catch (error) {
             console.error("Error updating enrollment:", error);
         }
@@ -137,12 +137,15 @@ export default function Kambaz() {
     useEffect(() => {
         if (!currentUser) return;
         
+        console.log("useEffect triggered - enrolling state:", enrolling);
         // Always fetch enrollments when user is logged in
         fetchEnrollments();
         
         if (enrolling) {
+            console.log("Fetching all courses (enrolling mode)");
             fetchCourses();
         } else {
+            console.log("Fetching user courses (non-enrolling mode)");
             findCoursesForUser();
         }
     }, [currentUser, enrolling]);
