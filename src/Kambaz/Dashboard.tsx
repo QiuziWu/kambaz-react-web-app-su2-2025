@@ -1,5 +1,5 @@
 import { Button, Card, Col, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaAlignJustify } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -10,7 +10,10 @@ import * as enrollmentClient from "./Enrollments/client";
 
 export default function Dashboard({ courses, course, setCourse, addNewCourse, updateCourse, deleteCourse, enrolling, setEnrolling, updateEnrollment }: { courses: any[]; course: any; setCourse: (course: any) => void; addNewCourse: (course: any) => Promise<void>; deleteCourse: (courseId: string) => Promise<void>; updateCourse: (courseId: string, courseUpdates: any) => Promise<void>; enrolling: boolean; setEnrolling: (enrolling: boolean) => void; updateEnrollment: (courseId: string, enrolled: boolean) => void; }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+    console.log("Dashboard - currentUser:", currentUser);
+    console.log("Dashboard - currentUser role:", currentUser?.role);
     // enrollments variable removed as it's not being used
 
     const fetchEnrollments = async () => {
@@ -28,8 +31,12 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
     // isEnrolledInCourse function removed as it's not being used
 
     const handleAddCourse = async () => {
+        console.log("Add button clicked!");
+        console.log("Current course data:", course);
+        
         try {
             await addNewCourse(course);
+            console.log("Course added successfully!");
             // Reset form after successful addition
             setCourse({
                 _id: "0", name: "New Course", number: "New Number",
@@ -66,10 +73,14 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
     };
 
     useEffect(() => {
-        if (currentUser) {
-            fetchEnrollments();
+        if (!currentUser) {
+            console.log("No current user, redirecting to signin");
+            navigate("/Kambaz/Account/Signin");
+            return;
         }
-    }, [currentUser]);
+        console.log("Current user found, fetching enrollments");
+        fetchEnrollments();
+    }, [currentUser, navigate]);
 
     return (
         <div id="wd-dashboard">
