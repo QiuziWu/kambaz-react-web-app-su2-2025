@@ -90,6 +90,9 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                     {enrolling ? "My Courses" : "All Courses"}
                 </button>
             </h1>
+            <div style={{fontSize: '12px', color: 'gray', marginBottom: '10px'}}>
+                Debug: enrolling = {enrolling ? 'true' : 'false'}, courses count = {courses.length}
+            </div>
             <hr />
             {currentUser?.role === "FACULTY" && (
                 <>
@@ -142,7 +145,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                             <Link to={`/Kambaz/Courses/${course._id}/Home`}>
                                                 <Button variant="primary">Go</Button>
                                             </Link>
-                                            {enrolling && (
+                                            {enrolling ? (
                                                 <button 
                                                     onClick={(event) => {
                                                         event.preventDefault();
@@ -155,6 +158,8 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, up
                                                 >
                                                     {course.enrolled ? "Unenroll" : "Enroll"}
                                                 </button>
+                                            ) : (
+                                                <div style={{fontSize: '10px', color: 'red'}}>enroll button hidden (enrolling=false)</div>
                                             )}
                                         </>
 
